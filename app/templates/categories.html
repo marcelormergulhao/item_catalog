@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Catalog Item App - Categories List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='styles/main_stylesheet.css')}}" />
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>
+            <strong> {{message}}</strong>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <header>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Item Catalog</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Categories</a></li>
+          <li><a href="#">History</a></li>
+        </ul>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="#">Login</a></li>
+            </ul>
+        </div>
+      </div>
+    </nav>
+    </header>
+    <section class="container">
+        {% for c in categories %}
+            <article class="category-item">
+                <a  class="category-link" href="{{url_for('show_category', category_name=c.name)}}">
+                    <img class="category-icon" src="{{url_for('static', filename='img/'+c.picture)}}" alt="{{c.name}} icon"/>
+                    <p class="category-name">{{c.name}}</p>
+                </a>
+            </article>
+        {% endfor %}
+    </section>
+</body>
+</html>
