@@ -57,16 +57,14 @@ def add_category():
         else:
             #Now test if the user has provided a file
             if "category_file" not in request.files:
+                flash("No image in post request")
                 return render_template("new_category.html")
             else:
                 category_file = request.files["category_file"]
                 if category_file.filename == "":
                     # Use default icon
                     filename = "question.png"
-                    flash("Category added")
-                    return redirect(url_for('show_categories'))
                 else:
-                    print("Filename",category_file.filename )
                     if allowed_file(category_file.filename):
                         filename = secure_filename(category_file.filename)
                         category_file.save(os.path.join(app.static_folder, "img", filename))
@@ -80,3 +78,37 @@ def add_category():
                 session.commit()
                 return redirect(url_for('show_categories'))
     return render_template("new_category.html")
+
+@app.route("/catalog/<category_name>/add_item", methods=["GET", "POST"])
+def add_item(category_name):
+    if request.method == "POST":
+        #Get category
+        category = session.query(Category).filter_by(name=category_name).first()
+        item = session.query(CatalogItem).filter_by(name=request.form["item_name"], category_id=category.id)
+        if item.count() > 0 :
+            flash("Item already exists exists")
+            return render_template("new_item.html")
+        else:
+            #Now test if the user has provided a file
+            if "item_file" not in request.files:
+                flash("No image in post request")
+                return render_template("new_item.html", category_name=category_name)
+            else:
+                item_file = request.files["item_file"]
+                if item_file.filename == "":
+                    # Use default icon
+                    filename = "question.png"
+                else:
+                    if allowed_file(item_file.filename):
+                        filename = secure_filename(item_file.filename)
+                        item_file.save(os.path.join(app.static_folder, "img", filename))
+                    else:
+                        flash("Image format not allowed")
+                        return render_template("new_item.html")
+                # Create DB entry for new category
+                new_item = CatalogItem(name=request.form["item_name"], picture=filename,
+                                       description=request.form["description"], category=category)
+                session.add(new_item)
+                session.commit()
+                return redirect(url_for('show_category', category_name=category_name))
+    return render_template("new_item.html", category_name=category_name)
