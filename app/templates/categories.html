@@ -49,6 +49,12 @@
                 </a>
             </article>
         {% endfor %}
+        <article class="category-item">
+            <a class="category-link" href="{{url_for('add_category')}}">
+                <img class="category-icon" src="{{url_for('static', filename='img/add.png')}}" alt="Add category icon"/>
+                <p class="category-name">Add Category</p>
+            </a>
+        </article>
     </section>
 </body>
 </html>

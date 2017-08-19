@@ -63,3 +63,7 @@ header {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
+.new_category_form{
+    width: 50%;
+}
