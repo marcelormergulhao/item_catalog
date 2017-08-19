@@ -37,5 +37,4 @@ def show_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).first()
     item = session.query(CatalogItem).filter_by(name=item_name, category_id=category.id).first()
 
-    return render_template("catalog_item.html", item=item)
-
+    return render_template("catalog_item.html", category=category, item=item)
