@@ -130,7 +130,30 @@ def edit_category(category_name):
                 flash("Warning: picture format not allowed, keeping the old one")
         session.add(category)
         session.commit()
-        return redirect(url_for('show_category', category_name=category_name))
+        return redirect(url_for('show_category', category_name=category.name))
 
     # Show category info in editable form
     return render_template("edit_category.html", category=category)
+
+@app.route("/catalog/<category_name>/<item_name>/edit", methods=["GET", "POST"])
+def edit_item(category_name, item_name):
+    category = session.query(Category).filter_by(name=category_name).first()
+    item = session.query(CatalogItem).filter_by(name=item_name, category_id=category.id).first()
+    if request.method == "POST":
+        item.name = request.form["item_name"]
+        item.description = request.form["description"]
+        item_file = request.files["item_file"]
+        # Receive new image if the picture is not empty and has a valid format
+        if item_file.filename != "":
+            if allowed_file(item_file.filename):
+                filename = secure_filename(item_file.filename)
+                item_file.save(os.path.join(app.static_folder, "img", filename))
+                item.picture = filename
+            else:
+                flash("Warning: picture format not allowed, keeping the old one")
+        session.add(item)
+        session.commit()
+        return redirect(url_for('show_item', category_name=category_name, item_name=item.name))
+
+    # Show item info in editable form
+    return render_template("edit_item.html", category=category, item=item)
