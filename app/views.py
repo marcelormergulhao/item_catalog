@@ -112,3 +112,25 @@ def add_item(category_name):
                 session.commit()
                 return redirect(url_for('show_category', category_name=category_name))
     return render_template("new_item.html", category_name=category_name)
+
+@app.route("/catalog/<category_name>/edit", methods=["GET", "POST"])
+def edit_category(category_name):
+    category = session.query(Category).filter_by(name=category_name).first()
+    if request.method == "POST":
+        category.name = request.form["category_name"]
+        category.description = request.form["description"]
+        category_file = request.files["category_file"]
+        # Receive new image if the picture is not empty and has a valid format
+        if category_file.filename != "":
+            if allowed_file(category_file.filename):
+                filename = secure_filename(category_file.filename)
+                category_file.save(os.path.join(app.static_folder, "img", filename))
+                category.picture = filename
+            else:
+                flash("Warning: picture format not allowed, keeping the old one")
+        session.add(category)
+        session.commit()
+        return redirect(url_for('show_category', category_name=category_name))
+
+    # Show category info in editable form
+    return render_template("edit_category.html", category=category)
