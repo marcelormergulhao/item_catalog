@@ -157,3 +157,14 @@ def edit_item(category_name, item_name):
 
     # Show item info in editable form
     return render_template("edit_item.html", category=category, item=item)
+
+@app.route("/catalog/<category_name>/<item_name>/delete", methods=["GET", "POST"])
+def delete_item(category_name, item_name):
+    category = session.query(Category).filter_by(name=category_name).first()
+    item = session.query(CatalogItem).filter_by(name=item_name, category_id=category.id).first()
+    if request.method == "POST":
+        session.delete(item)
+        session.commit()
+        return redirect(url_for('show_category', category_name=category_name))
+
+    return render_template("delete_item.html", category_name=category_name, item_name=item_name)
