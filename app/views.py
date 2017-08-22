@@ -168,3 +168,13 @@ def delete_item(category_name, item_name):
         return redirect(url_for('show_category', category_name=category_name))
 
     return render_template("delete_item.html", category_name=category_name, item_name=item_name)
+
+@app.route("/catalog/<category_name>/delete", methods=["GET", "POST"])
+def delete_category(category_name):
+    category = session.query(Category).filter_by(name=category_name).first()
+    if request.method == "POST":
+        session.delete(category)
+        session.commit()
+        return redirect(url_for('show_categories'))
+
+    return render_template("delete_category.html", category_name=category_name)
