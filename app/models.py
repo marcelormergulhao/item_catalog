@@ -4,6 +4,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from passlib.apps import custom_app_context
 
 #Signals that the class is a declarative base
 Base = declarative_base()
@@ -12,9 +13,15 @@ class User(Base):
     __tablename__ = "user"
 
     name = Column(String)
-    email = Column(String)
+    password_hash = Column(String)
     picture = Column(String)
     id = Column(Integer, primary_key = True )
+
+    def hash_password(self, password):
+        self.password_hash = custom_app_context.encrypt(password)
+
+    def verify_password(self, password):
+        return custom_app_context.verify(password, self.password_hash)
 
 class Category(Base):
     """Table representing the categories of the catalog items"""

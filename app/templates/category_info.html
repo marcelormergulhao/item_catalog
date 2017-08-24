@@ -32,7 +32,11 @@
         </ul>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#">Login</a></li>
+                {% if not user_id %}
+                <li><a href="{{url_for('user_login')}}">Login</a></li>
+                {% else %}
+                <li><a href="{{url_for('user_logout')}}">Logout</a></li>
+                {% endif %}
             </ul>
         </div>
       </div>
@@ -44,8 +48,10 @@
             <article class="description">
                 <h1 class="description-title">{{category.name}}</h1>
                 <p class="description-text">{{category.description}}</p>
+                {% if user_id %}
                 <a href="{{url_for('edit_category', category_name=category.name)}}">Edit Category</a>
                 <a href="{{url_for('delete_category', category_name=category.name)}}">Delete Category</a>
+                {% endif %}
             </article>
         </section>
         <section class="category-items">
@@ -53,7 +59,9 @@
             {% for i in category_items %}
                 <li><a href="{{url_for('show_item', category_name=category.name, item_name=i.name)}}">{{i.name}}</a></li>
             {% endfor %}
+            {% if user_id %}
                 <li><a href="{{url_for('add_item', category_name=category.name)}}">Add new item</a></li>
+            {% endif %}
             </ul>
         </section>
     </section>

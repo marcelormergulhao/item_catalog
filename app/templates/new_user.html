@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Catalog Item App - Delete Category</title>
+    <title>Catalog Item App - Register user</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='styles/items_style.css')}}" />
 </head>
@@ -44,12 +44,13 @@
     </header>
     <section class="container">
         <section class="category">
-            <img class="category-icon" src="{{url_for('static', filename='img/cancel.png')}}" alt="Delete category icon"/>
+            <img class="category-icon" src="{{url_for('static', filename='img/user.png')}}" alt="Register user icon"/>
             <article class="new_category_form">
-                <h1 class="description-title">Delete category</h1>
-                <form action="{{url_for('delete_category', category_name=category_name)}}" method="POST">
-                    <p>Are you sure you want to delete {{category_name}}?</p>
-                    <button type="submit" >Yes</button>
+                <h1 class="description-title">Register User</h1>
+                <form class="login_form" action="{{url_for('new_user')}}" method="POST">
+                    <input class="username" name="username" type="text" placeholder="Username"/>
+                    <input class="password" name="password" type="password" />
+                    <button class="submit" type="submit" >Register</button>
                 </form>
             </article>
         </section>

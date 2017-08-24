@@ -67,3 +67,16 @@ header {
 .new_category_form, .new_item_form{
     width: 50%;
 }
+
+.login_form {
+    display: flex;
+    width: 60%;
+    align-items: center;
+    flex-direction: row;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.username, .password{
+    width: 100%;
+}

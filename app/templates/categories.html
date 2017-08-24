@@ -34,7 +34,11 @@
         </ul>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#">Login</a></li>
+                {% if not user_id %}
+                <li><a href="{{url_for('user_login')}}">Login</a></li>
+                {% else %}
+                <li><a href="{{url_for('user_logout')}}">Logout</a></li>
+                {% endif %}
             </ul>
         </div>
       </div>
@@ -49,12 +53,14 @@
                 </a>
             </article>
         {% endfor %}
+        {% if user_id %}
         <article class="category-item">
             <a class="category-link" href="{{url_for('add_category')}}">
                 <img class="category-icon" src="{{url_for('static', filename='img/add.png')}}" alt="Add category icon"/>
                 <p class="category-name">Add Category</p>
             </a>
         </article>
+        {% endif %}
     </section>
 </body>
 </html>
