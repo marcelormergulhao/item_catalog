@@ -191,9 +191,13 @@ def delete_item(category_name, item_name):
         item = session.query(CatalogItem).filter_by(name=item_name, category_id=category.id).first()
         if item:
             if request.method == "POST":
-                session.delete(item)
-                session.commit()
-                return redirect(url_for('show_category', category_name=category_name))
+                # Check if the user confirmed the deletion
+                if request.form["confirmation"] == "yes":
+                    session.delete(item)
+                    session.commit()
+                    return redirect(url_for('show_category', category_name=category_name))
+                else:
+                    return redirect(url_for('show_item', category_name=category_name, item_name=item_name))
 
             return render_template("delete_item.html", category_name=category_name, item_name=item_name, user_id=login_session.get("user_id"))
     return abort(404)
@@ -207,9 +211,13 @@ def delete_category(category_name):
     # Check if the category really exists
     if category:
         if request.method == "POST":
-            session.delete(category)
-            session.commit()
-            return redirect(url_for('show_categories'))
+            # Check if the user confirmed the deletion
+            if request.form["confirmation"] == "yes":
+                session.delete(category)
+                session.commit()
+                return redirect(url_for('show_categories'))
+            else:
+                return redirect(url_for('show_category', category_name=category_name))
 
         return render_template("delete_category.html", category_name=category_name, user_id=login_session.get("user_id"))
     return abort(404)

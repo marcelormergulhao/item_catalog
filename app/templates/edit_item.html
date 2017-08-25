@@ -29,6 +29,7 @@
         <ul class="nav navbar-nav">
           <li><a href="/catalog">Categories</a></li>
           <li><a href="#">History</a></li>
+          <li><a href="{{url_for('show_item', category_name=category.name, item_name=item.name)}}">Return to {{item.name}}</a></li>
         </ul>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">

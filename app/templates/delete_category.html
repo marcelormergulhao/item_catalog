@@ -29,6 +29,7 @@
         <ul class="nav navbar-nav">
           <li><a href="/catalog">Categories</a></li>
           <li><a href="#">History</a></li>
+          <li><a href="{{url_for('show_category', category_name=category_name)}}">Return to {{category_name}}</a></li>
         </ul>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
@@ -50,7 +51,8 @@
                 <h1 class="description-title">Delete category</h1>
                 <form action="{{url_for('delete_category', category_name=category_name)}}" method="POST">
                     <p>Are you sure you want to delete {{category_name}}?</p>
-                    <button type="submit" >Yes</button>
+                    <button type="submit" name="confirmation" value="yes">Yes</button>
+                    <button type="submit" name="confirmation" value="no">No</button>
                 </form>
             </article>
         </section>
