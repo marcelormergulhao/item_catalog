@@ -32,6 +32,7 @@
         </ul>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{url_for('new_user')}}">Register User</a></li>
                 {% if not user_id %}
                 <li><a href="{{url_for('user_login')}}">Login</a></li>
                 {% else %}
@@ -49,7 +50,7 @@
                 <h1 class="description-title">Login User</h1>
                 <form class="login_form" action="{{url_for('user_login')}}" method="POST">
                     <input class="username" name="username" type="text" placeholder="Username"/>
-                    <input class="password" name="password" type="password" />
+                    <input class="password" name="password" type="password" placeholder="Password"/>
                     <button class="submit" type="submit" >Login</button>
                 </form>
             </article>

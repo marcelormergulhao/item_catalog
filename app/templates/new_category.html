@@ -32,6 +32,7 @@
         </ul>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{url_for('new_user')}}">Register User</a></li>
                 {% if not user_id %}
                 <li><a href="{{url_for('user_login')}}">Login</a></li>
                 {% else %}
