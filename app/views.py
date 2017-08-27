@@ -12,6 +12,10 @@ from flask import make_response, abort, g, session as login_session
 import requests
 from werkzeug.utils import secure_filename
 import os
+from flask_httpauth import HTTPBasicAuth
+
+#Add API auth object
+auth = HTTPBasicAuth()
 
 #Load client secret to enable google login
 CLIENT_ID = json.loads(open("app/static/credentials/client_secret.json").read())["web"]["client_id"];
@@ -373,3 +377,30 @@ def gdisconnect():
         return True
     else:
         return False
+
+@auth.verify_password
+def verify_password(username, password):
+    # Force users to be registered locally to use API
+    user = session.query(User).filter_by(name=username,provider="internal").first()
+    if not user or not user.verify_password(password):
+        return False
+    g.user = user
+    return True
+
+@app.route("/catalog.json")
+@auth.login_required
+def show_categories_json():
+    #Query database and return it as a json object
+    categories = session.query(Category)
+    return jsonify(Categories=[category.serialize for category in categories])
+
+@app.route("/<category_name>/items.json")
+@auth.login_required
+def show_category_items(category_name):
+    #Query database and return it as a json object
+    category = session.query(Category).filter_by(name=category_name).first()
+    if category:
+        item_list = session.query(CatalogItem).filter_by(category_id=category.id)
+        return jsonify(Category=category.serialize,Items=[item.serialize for item in item_list])
+    else:
+        return jsonify(Error="No category with name {}".format(category_name))
