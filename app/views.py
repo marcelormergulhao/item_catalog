@@ -6,18 +6,14 @@ from sqlalchemy.orm import sessionmaker
 from flask import session as login_session
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 from flask import make_response, abort, g, session as login_session
-from flask_httpauth import HTTPBasicAuth
 from werkzeug.utils import secure_filename
+from functools import wraps
 import random
 import string
 import httplib2
 import json
 import requests
 import os
-
-
-# Add API auth object
-auth = HTTPBasicAuth()
 
 # Load client secret to enable google login
 secret_file = "app/static/credentials/client_secret.json"
@@ -35,6 +31,18 @@ ALLOWED_EXTENSIONS = ["png"]
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# Login required decorator to improove readability
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "username" in login_session:
+            return f(*args, **kwargs)
+        else:
+            flash("Access denied, please login")
+            return redirect(url_for("user_login"))
+    return decorated_function
 
 
 @app.route("/")
@@ -85,10 +93,8 @@ def show_item(category_name, item_name):
 
 
 @app.route("/add_category", methods=["GET", "POST"])
+@login_required
 def add_category():
-    # Require session login
-    if "username" not in login_session:
-        return redirect(url_for("user_login"))
     if request.method == "POST":
         # Check if the category exists:
         cat = session.query(Category).filter_by(name=request.form["cat_name"])
@@ -126,10 +132,8 @@ def add_category():
 
 
 @app.route("/catalog/<category_name>/add_item", methods=["GET", "POST"])
+@login_required
 def add_item(category_name):
-    # Require session login
-    if "username" not in login_session:
-        return redirect(url_for("user_login"))
     # Get categoryitem
     category = session.query(Category).filter_by(name=category_name).first()
     if category:
@@ -180,10 +184,8 @@ def add_item(category_name):
 
 
 @app.route("/catalog/<category_name>/edit", methods=["GET", "POST"])
+@login_required
 def edit_category(category_name):
-    # Require session login
-    if "username" not in login_session:
-        return redirect(url_for("user_login"))
     category = session.query(Category).filter_by(name=category_name).first()
     if category:
         if request.method == "POST":
@@ -213,10 +215,8 @@ def edit_category(category_name):
 
 @app.route("/catalog/<category_name>/<item_name>/edit",
            methods=["GET", "POST"])
+@login_required
 def edit_item(category_name, item_name):
-    # Require session login
-    if "username" not in login_session:
-        return redirect(url_for("user_login"))
     cat = session.query(Category).filter_by(name=category_name).first()
     if cat:
         item = session.query(CatalogItem).filter_by(name=item_name,
@@ -251,10 +251,8 @@ def edit_item(category_name, item_name):
 
 @app.route("/catalog/<category_name>/<item_name>/delete",
            methods=["GET", "POST"])
+@login_required
 def delete_item(category_name, item_name):
-    # Require session login
-    if "username" not in login_session:
-        return redirect(url_for("user_login"))
     cat = session.query(Category).filter_by(name=category_name).first()
     if cat:
         item = session.query(CatalogItem).filter_by(name=item_name,
@@ -280,10 +278,8 @@ def delete_item(category_name, item_name):
 
 
 @app.route("/catalog/<category_name>/delete", methods=["GET", "POST"])
+@login_required
 def delete_category(category_name):
-    # Require session login
-    if "username" not in login_session:
-        return redirect(url_for("user_login"))
     category = session.query(Category).filter_by(name=category_name).first()
     # Check if the category really exists
     if category:
@@ -331,25 +327,25 @@ def user_login():
 
 
 @app.route("/user_logout", methods=["GET", "POST"])
+@login_required
 def user_logout():
-    if "username" in login_session:
-        if request.method == "POST":
-            if request.form["confirmation"] == "yes":
-                # Logout user
-                if login_session["provider"] == "google":
-                    gdisconnect()
-                    del login_session["credentials"]
-                    del login_session["gplus_id"]
-                    del login_session["email"]
-                    del login_session["picture"]
-                del login_session["username"]
-                del login_session["user_id"]
-                del login_session["provider"]
-                flash("You have been successfully logged out!")
-            return redirect(url_for("show_categories"))
-        return render_template("user_logout.html",
-                               username=login_session["username"],
-                               user_id=login_session.get("user_id"))
+    if request.method == "POST":
+        if request.form["confirmation"] == "yes":
+            # Logout user
+            if login_session["provider"] == "google":
+                gdisconnect()
+                del login_session["credentials"]
+                del login_session["gplus_id"]
+                del login_session["email"]
+                del login_session["picture"]
+            del login_session["username"]
+            del login_session["user_id"]
+            del login_session["provider"]
+            flash("You have been successfully logged out!")
+        return redirect(url_for("show_categories"))
+    return render_template("user_logout.html",
+                           username=login_session["username"],
+                           user_id=login_session.get("user_id"))
     return abort(404)
 
 
@@ -478,19 +474,8 @@ def gdisconnect():
         return False
 
 
-@auth.verify_password
-def verify_password(username, password):
-    # Force users to be registered locally to use API
-    user = session.query(User).filter_by(name=username,
-                                         provider="internal").first()
-    if not user or not user.verify_password(password):
-        return False
-    g.user = user
-    return True
-
-
 @app.route("/catalog.json")
-@auth.login_required
+@login_required
 def show_categories_json():
     # Query database and return it as a json object
     categories = session.query(Category)
@@ -498,7 +483,7 @@ def show_categories_json():
 
 
 @app.route("/<category_name>/items.json")
-@auth.login_required
+@login_required
 def show_category_items(category_name):
     # Query database and return it as a json object
     cat = session.query(Category).filter_by(name=category_name).first()
