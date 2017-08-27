@@ -15,6 +15,7 @@ class User(Base):
     name = Column(String)
     password_hash = Column(String)
     picture = Column(String)
+    provider = Column(String)
     id = Column(Integer, primary_key = True )
 
     def hash_password(self, password):

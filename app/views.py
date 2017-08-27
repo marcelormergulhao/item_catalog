@@ -5,13 +5,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from flask import session as login_session
 import random, string
-from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+from oauth2client.client import flow_from_clientsecrets, FlowExchangeError, OAuth2WebServerFlow
 import httplib2
 import json
 from flask import make_response, abort, g, session as login_session
 import requests
 from werkzeug.utils import secure_filename
 import os
+
+#Load client secret to enable google login
+CLIENT_ID = json.loads(open("app/static/credentials/client_secret.json").read())["web"]["client_id"];
 
 #Setup database connection
 engine = create_engine("sqlite:///catalog.db")
@@ -226,12 +229,13 @@ def delete_category(category_name):
 def user_login():
     if request.method == "POST":
         #Try to get the user with username provided
-        user = session.query(User).filter_by(name=request.form["username"]).first()
+        user = session.query(User).filter_by(name=request.form["username"], provider="internal").first()
         if user:
             #Check for password match
             if user.verify_password(request.form["password"]):
                 login_session["username"] = request.form["username"]
                 login_session["user_id"] = user.id
+                login_session["provider"] = "internal"
 
                 return redirect(url_for("show_categories"))
         flash("Failed to authenticate user")
@@ -246,9 +250,16 @@ def user_logout():
     if "username" in login_session:
         if request.method == "POST":
             #Logout user
+            if login_session["provider"] == "google" :
+                gdisconnect()
+                del login_session["credentials"]
+                del login_session["gplus_id"]
+                del login_session["email"]
+                del login_session["picture"]
             del login_session["username"]
             del login_session["user_id"]
-            flash("User logged out")
+            del login_session["provider"]
+            flash("You have been successfully logged out!")
             return redirect(url_for("show_categories"))
         return render_template("user_logout.html", username=login_session["username"], user_id=login_session.get("user_id"))
     return abort(404)
@@ -260,17 +271,105 @@ def new_user():
             flash("Please provide username and password")
             return render_template("new_user.html", user_id=login_session.get("user_id"))
 
-        if session.query(User).filter_by(name = request.form["username"]).first():
+        if session.query(User).filter_by(name = request.form["username"], provider="internal").first():
             flash("Username already exists, choose another one")
             return render_template("new_user.html", user_id=login_session.get("user_id"))
 
         login_session["username"] = request.form["username"]
-        user = User(name=request.form["username"])
+        login_session["provider"] = "internal"
+        user = User(name=request.form["username"], provider="internal")
         user.hash_password(request.form["password"])
         session.add(user)
         session.commit()
-        user = session.query(User).filter_by(name=login_session["username"]).first()
+        user = session.query(User).filter_by(name=login_session["username"], provider="internal").first()
         login_session["user_id"] = user.id
         flash("User successfully created")
         return redirect(url_for("show_categories"))
     return render_template("new_user.html", user_id=login_session.get("user_id"))
+
+@app.route("/gconnect", methods = ["POST"])
+def gconnect():
+    if request.args.get("state") != login_session["state"]:
+        response = make_response(json.dumps("Invalid state parameter"), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
+    code = request.data
+    try:
+        oauth_flow = flow_from_clientsecrets("app/static/credentials/client_secret.json", scope="")
+        oauth_flow.redirect_uri="postmessage"
+        credentials = oauth_flow.step2_exchange(code)
+    except FlowExchangeError as e:
+        response = make_response(json.dumps("Failed to upgrade the authorization code {}".format(e)), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
+
+    #Check that the access token is valid
+    access_token = credentials.access_token
+    url = ("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}".format(access_token))
+    h = httplib2.Http()
+    result = json.loads(h.request(url, "POST")[1].decode())
+    #If there was an error in the access token info, abort
+    if result.get("error") is not None:
+        response = make_response(json.dumps(result.get("error")), 500)
+        response.headers["Content-Type"] = "application/json"
+        return response
+    #Verify the access token is used by the intended user
+    gplus_id = credentials.id_token["sub"]
+    if result["user_id"] != gplus_id:
+        response = make_response(json.dumps("Token's user ID doesn't match given user ID."), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
+    if result["issued_to"] != CLIENT_ID:
+        response = make_response(json.dumps("Token's client id does not match apps's"), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
+    #Check to see if user is already logged in
+    stored_credentials = login_session.get("credentials")
+    stored_gplus_id = login_session.get("gplus_id")
+    if stored_credentials is not None and gplus_id == stored_gplus_id:
+        response = make_response(json.dumps("Current user is already connected."), 200)
+        response.headers["Content-Type"] = "application/json"
+    #Store credentials for later use
+    login_session["credentials"] = credentials.access_token
+    login_session["gplus_id"] = gplus_id
+
+    #Get user info
+    userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+    params = {'access_token': credentials.access_token, 'alt': 'json'}
+    answer = requests.get(userinfo_url, params=params)
+    data = json.loads(answer.text)
+
+    login_session["provider"] = "google"
+    login_session["username"] = data["name"]
+    login_session["picture"] = data["picture"]
+    login_session["email"] = data["email"]
+    #Check if user is in database and try to create one if it isn't
+    try:
+        user = session.query(User).filter_by(name=login_session["username"], provider="google").one()
+        user_id = user.id
+    except:
+        user_id = None
+    if not user_id:
+        user = User(name=login_session["username"], provider="google")
+        session.add(user)
+        session.commit()
+        user = session.query(User).filter_by(name=login_session["username"], provider="google").first()
+        user_id = user.id
+    login_session["user_id"] = user_id
+    flash("You are now logged in as {}".format(login_session["username"]))
+    return redirect(url_for("show_categories"))
+
+def gdisconnect():
+    credentials = login_session.get("credentials")
+    #Check if user was connected
+    if credentials is None:
+        return False
+    #Revoke current token
+    access_token = credentials
+    url = "https://accounts.google.com/o/oauth2/revoke?token={}".format(access_token)
+    h = httplib2.Http()
+    result = h.request(url, "GET")[0]
+    if result["status"] == "200":
+        return True
+    else:
+        return False
