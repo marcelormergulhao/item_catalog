@@ -29,7 +29,7 @@
         <ul class="nav navbar-nav">
           <li><a href="/catalog">Categories</a></li>
           <li><a href="{{url_for('show_latest')}}">Latest Categories</a></li>
-          <li><a href="{{url_for('show_category', category_name=category_name)}}">{{category_name}}</a></li>
+          <li><a href="{{url_for('show_category', category_name=category_name)}}">Return to {{category_name}}</a></li>
         </ul>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
@@ -52,7 +52,7 @@
                 <form action="{{url_for('add_item', category_name=category_name)}}" method="POST" enctype="multipart/form-data">
                     <input name="item_name" type="text" placeholder="Item Name"/>
                     <input name="item_file" type="file"/>
-                    <input name="description" type="text" placeholder="Item Description"/>
+                    <input name="desc" type="text" placeholder="Item Description"/>
                     <button type="submit" >Add</button>
                 </form>
             </article>

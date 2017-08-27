@@ -33,7 +33,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{{url_for('new_user')}}">Register User</a></li>
-                {% if not user_id %}
+                {% if not id %}
                 <li><a href="{{url_for('user_login')}}">Login</a></li>
                 {% else %}
                 <li><a href="{{url_for('user_logout')}}">Logout</a></li>
@@ -49,9 +49,9 @@
             <article class="new_category_form">
                 <h1 class="description-title">Add new category</h1>
                 <form action="/add_category" method="POST" enctype="multipart/form-data">
-                    <input name="category_name" type="text" placeholder="Category Name"/>
+                    <input name="cat_name" type="text" placeholder="Category Name"/>
                     <input name="category_file" type="file"/>
-                    <input name="description" type="text" placeholder="Category Description"/>
+                    <input name="desc" type="text" placeholder="Category Description"/>
                     <button type="submit" >Add</button>
                 </form>
             </article>
