@@ -39,6 +39,12 @@ def show_categories():
     categories_list = session.query(Category)
     return render_template("categories.html", categories=categories_list, user_id=login_session.get("user_id"))
 
+@app.route("/latest")
+def show_latest():
+    """Show latest added items"""
+    categories_list = session.query(Category).order_by(Category.id.desc()).limit(12)
+    return render_template("latest.html", categories=categories_list, user_id=login_session.get("user_id"))
+
 @app.route("/catalog/<category_name>")
 def show_category(category_name):
     """Show category description and items"""
