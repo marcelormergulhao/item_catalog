@@ -31,3 +31,5 @@ The images used in this project were designed by:
 * [Freepik](https://www.flaticon.com/authors/freepik) from Flaticon as part of [American Football](https://www.flaticon.com/packs/american-football-2).
 * [Maxim Basinski](https://www.flaticon.com/authors/maxim-basinski) from Flaticon as part of [Universal icons](https://www.flaticon.com/packs/universal-icons)
 * [Roundicons](https://www.flaticon.com/packs/audio-and-video-controls) from Flaticon as part of [Audio and Video Controls](https://www.flaticon.com/packs/audio-and-video-controls)
+
+All the descriptions were found on [Wikipedia](https://en.wikipedia.org/wiki/Main_Page).
