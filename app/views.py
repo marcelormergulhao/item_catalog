@@ -120,10 +120,13 @@ def add_category():
                         flash("Image format not allowed")
                         return render_template("new_category.html",
                                                id=login_session.get("user_id"))
+                # Find user that will own the category
+                u = session.query(User).filter_by(id=login_session["user_id"]).first()
                 # Create DB entry for new category
-                new_category = Category(name=request.form["category_name"],
+                new_category = Category(name=request.form["cat_name"],
                                         picture=filename,
-                                        description=request.form["desc"])
+                                        description=request.form["desc"],
+                                        user=u)
                 session.add(new_category)
                 session.commit()
                 return redirect(url_for('show_categories'))
@@ -168,11 +171,14 @@ def add_item(category_name):
                             flash("Image format not allowed")
                             return render_template("new_item.html",
                                                    user_id=u_id)
+                    # Find user that will own the category
+                    u = session.query(User).filter_by(id=u_id).first()
                     # Create DB entry for new category
                     new_item = CatalogItem(name=request.form["item_name"],
                                            picture=filename,
                                            description=request.form["desc"],
-                                           category=category)
+                                           category=category,
+                                           user=u)
                     session.add(new_item)
                     session.commit()
                     return redirect(url_for('show_category',
@@ -187,7 +193,7 @@ def add_item(category_name):
 @login_required
 def edit_category(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
-    if category:
+    if category and category.user_id == login_session["user_id"]:
         if request.method == "POST":
             category.name = request.form["category_name"]
             category.description = request.form["description"]
@@ -221,7 +227,7 @@ def edit_item(category_name, item_name):
     if cat:
         item = session.query(CatalogItem).filter_by(name=item_name,
                                                     category_id=cat.id).first()
-        if item:
+        if item and item.user_id == login_session["user_id"]:
             if request.method == "POST":
                 item.name = request.form["item_name"]
                 item.description = request.form["description"]
@@ -257,7 +263,7 @@ def delete_item(category_name, item_name):
     if cat:
         item = session.query(CatalogItem).filter_by(name=item_name,
                                                     category_id=cat.id).first()
-        if item:
+        if item and item.user_id == login_session["user_id"] :
             if request.method == "POST":
                 # Check if the user confirmed the deletion
                 if request.form["confirmation"] == "yes":
@@ -282,7 +288,7 @@ def delete_item(category_name, item_name):
 def delete_category(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
     # Check if the category really exists
-    if category:
+    if category and category.user_id == login_session["user_id"]:
         if request.method == "POST":
             # Check if the user confirmed the deletion
             if request.form["confirmation"] == "yes":

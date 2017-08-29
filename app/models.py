@@ -32,6 +32,8 @@ class Category(Base):
     name = Column(String)
     description = Column(String)
     picture = Column(String)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -49,6 +51,8 @@ class CatalogItem(Base):
     picture = Column(String)
     category_id = Column(Integer, ForeignKey("category.id"))
     category = relationship(Category)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship(User)
 
     @property
     def serialize(self):
