@@ -34,16 +34,20 @@ def allowed_file(filename):
 
 
 # Login required decorator to improove readability
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "username" in login_session:
-            return f(*args, **kwargs)
-        else:
-            flash("Access denied, please login")
-            return redirect(url_for("user_login"))
-    return decorated_function
-
+def login_required(json_endpoint):
+    def first_wrapper(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if "username" in login_session:
+                return f(*args, **kwargs)
+            else:
+                if json_endpoint:
+                    return jsonify(Error="Access denied, please login")
+                else:
+                    flash("Access denied, please login")
+                    return redirect(url_for("user_login"))
+        return decorated_function
+    return first_wrapper
 
 @app.route("/")
 @app.route("/catalog")
@@ -93,7 +97,7 @@ def show_item(category_name, item_name):
 
 
 @app.route("/add_category", methods=["GET", "POST"])
-@login_required
+@login_required(json_endpoint=False)
 def add_category():
     if request.method == "POST":
         # Check for name safety
@@ -141,7 +145,7 @@ def add_category():
 
 
 @app.route("/catalog/<category_name>/add_item", methods=["GET", "POST"])
-@login_required
+@login_required(json_endpoint=False)
 def add_item(category_name):
     # Get categoryitem
     category = session.query(Category).filter_by(name=category_name).first()
@@ -200,7 +204,7 @@ def add_item(category_name):
 
 
 @app.route("/catalog/<category_name>/edit", methods=["GET", "POST"])
-@login_required
+@login_required(json_endpoint=False)
 def edit_category(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
     if category and category.user_id == login_session["user_id"]:
@@ -231,7 +235,7 @@ def edit_category(category_name):
 
 @app.route("/catalog/<category_name>/<item_name>/edit",
            methods=["GET", "POST"])
-@login_required
+@login_required(json_endpoint=False)
 def edit_item(category_name, item_name):
     cat = session.query(Category).filter_by(name=category_name).first()
     if cat:
@@ -267,7 +271,7 @@ def edit_item(category_name, item_name):
 
 @app.route("/catalog/<category_name>/<item_name>/delete",
            methods=["GET", "POST"])
-@login_required
+@login_required(json_endpoint=False)
 def delete_item(category_name, item_name):
     cat = session.query(Category).filter_by(name=category_name).first()
     if cat:
@@ -294,7 +298,7 @@ def delete_item(category_name, item_name):
 
 
 @app.route("/catalog/<category_name>/delete", methods=["GET", "POST"])
-@login_required
+@login_required(json_endpoint=False)
 def delete_category(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
     # Check if the category really exists
@@ -343,7 +347,7 @@ def user_login():
 
 
 @app.route("/user_logout", methods=["GET", "POST"])
-@login_required
+@login_required(json_endpoint=False)
 def user_logout():
     if request.method == "POST":
         if request.form["confirmation"] == "yes":
@@ -491,7 +495,7 @@ def gdisconnect():
 
 
 @app.route("/catalog.json")
-@login_required
+@login_required(True)
 def show_categories_json():
     # Query database and return it as a json object
     categories = session.query(Category)
@@ -499,7 +503,7 @@ def show_categories_json():
 
 
 @app.route("/<category_name>/items.json")
-@login_required
+@login_required(True)
 def show_category_items(category_name):
     # Query database and return it as a json object
     cat = session.query(Category).filter_by(name=category_name).first()
