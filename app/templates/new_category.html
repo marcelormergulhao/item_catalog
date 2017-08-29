@@ -48,7 +48,7 @@
             <img class="category-icon" src="{{url_for('static', filename='img/add.png')}}" alt="Add category icon"/>
             <article class="new_category_form">
                 <h1 class="description-title">Add new category</h1>
-                <form action="/add_category" method="POST" enctype="multipart/form-data">
+                <form action="{{url_for('add_category')}}" method="POST" enctype="multipart/form-data">
                     <input name="cat_name" type="text" placeholder="Category Name"/>
                     <input name="category_file" type="file"/>
                     <input name="desc" type="text" placeholder="Category Description"/>
