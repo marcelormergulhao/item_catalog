@@ -2,7 +2,7 @@ import os
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine
 from passlib.apps import custom_app_context
 
@@ -49,8 +49,11 @@ class CatalogItem(Base):
     name = Column(String, nullable=False)
     description = Column(String)
     picture = Column(String)
-    category_id = Column(Integer, ForeignKey("category.id"))
-    category = relationship(Category)
+    category_id = Column(Integer,
+                         ForeignKey("category.id"))
+    category = relationship(Category,
+                            backref=backref("CatalogItem",
+                                            cascade="all,delete"))
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship(User)
 
