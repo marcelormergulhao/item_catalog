@@ -14,7 +14,10 @@ Then you should populate the database with the some items to enable item visuali
 
 `python3 populate_database.py`
 
-After that you should have a proper database with several items and categories, but no users.
+After that you should have a proper database with several items and categories and one user.
+
+The user is named "test" and the password for this user is "pass". If you want to edit or delete the current loaded items you should login with the test user.
+
 If you want to add a new user and enable item edition go to the "Register User" page or the "Login" page and login with your Google Account.
 
 To run the flask app you should run it with the "run.py" script provided:
