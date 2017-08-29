@@ -121,7 +121,8 @@ def add_category():
                         return render_template("new_category.html",
                                                id=login_session.get("user_id"))
                 # Find user that will own the category
-                u = session.query(User).filter_by(id=login_session["user_id"]).first()
+                u = session.query(User).filter_by(id=login_session["user_id"])
+                u = u.first()
                 # Create DB entry for new category
                 new_category = Category(name=request.form["cat_name"],
                                         picture=filename,
@@ -263,7 +264,7 @@ def delete_item(category_name, item_name):
     if cat:
         item = session.query(CatalogItem).filter_by(name=item_name,
                                                     category_id=cat.id).first()
-        if item and item.user_id == login_session["user_id"] :
+        if item and item.user_id == login_session["user_id"]:
             if request.method == "POST":
                 # Check if the user confirmed the deletion
                 if request.form["confirmation"] == "yes":
