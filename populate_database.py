@@ -17,7 +17,7 @@ if test == 0:
     session.commit()
 
     # Create categories - sports
-    c = Category(id=1, name="American Football", description="American football, referred to as football in the United States and Canada, and also known as 'gridiron football' or simply 'gridiron', is a sport played by two teams of eleven players on a rectangular field with goalposts at each end. The offense, the team with control of the oval-shaped football, attempts to advance down the field by running with or passing the ball, while the team without control of the ball, the defense, aims to stop their advance and take control of the ball for themselves. The offense must advance at least ten yards in four downs, or plays, or else they turn over the football to the opposing team; if they succeed, they are given a new set of four downs. Points are primarily scored by advancing the ball into the opposing team's end zone for a touchdown or kicking the ball through the opponent's goalposts for a field goal. The team with the most points at the end of a game wins.", picture="american-football-1.png", user=u)
+    c = Category(id=1, name="American_Football", description="American football, referred to as football in the United States and Canada, and also known as 'gridiron football' or simply 'gridiron', is a sport played by two teams of eleven players on a rectangular field with goalposts at each end. The offense, the team with control of the oval-shaped football, attempts to advance down the field by running with or passing the ball, while the team without control of the ball, the defense, aims to stop their advance and take control of the ball for themselves. The offense must advance at least ten yards in four downs, or plays, or else they turn over the football to the opposing team; if they succeed, they are given a new set of four downs. Points are primarily scored by advancing the ball into the opposing team's end zone for a touchdown or kicking the ball through the opponent's goalposts for a field goal. The team with the most points at the end of a game wins.", picture="american-football-1.png", user=u)
     session.add(c)
     session.commit()
 
@@ -85,11 +85,11 @@ if test == 0:
     session.add(c18)
     session.commit()
 
-    c19 = Category(id=19, name="Table Tennis", description="Table tennis, also known as ping pong, is a sport in which two or four players hit a lightweight ball back and forth across a table using a small bat. The game takes place on a hard table divided by a net. Except for the initial serve, the rules are generally as follows: players must allow a ball played toward them to bounce one time on their side of the table, and must return it so that it bounces on the opposite side at least once. A point is scored when a player fails to return the ball within the rules. Play is fast and demands quick reactions. Spinning the ball alters its trajectory and limits an opponent's options, giving the hitter a great advantage.", picture="ping-pong.png", user=u)
+    c19 = Category(id=19, name="Table_Tennis", description="Table tennis, also known as ping pong, is a sport in which two or four players hit a lightweight ball back and forth across a table using a small bat. The game takes place on a hard table divided by a net. Except for the initial serve, the rules are generally as follows: players must allow a ball played toward them to bounce one time on their side of the table, and must return it so that it bounces on the opposite side at least once. A point is scored when a player fails to return the ball within the rules. Play is fast and demands quick reactions. Spinning the ball alters its trajectory and limits an opponent's options, giving the hitter a great advantage.", picture="ping-pong.png", user=u)
     session.add(c19)
     session.commit()
 
-    c20 = Category(id=20, name="Auto Racing", description="Auto racing (also known as car racing, motor racing[1] or automobile racing) is a sport involving the racing of automobiles for competition.", picture="racing.png", user=u)
+    c20 = Category(id=20, name="Auto_Racing", description="Auto racing (also known as car racing, motor racing[1] or automobile racing) is a sport involving the racing of automobiles for competition.", picture="racing.png", user=u)
     session.add(c20)
     session.commit()
 
@@ -117,7 +117,7 @@ if test == 0:
     session.add(c26)
     session.commit()
 
-    c27 = Category(id=27, name="Water Polo", description="Water polo is a competitive team sport played in the water between two teams. The game consists of four quarters, in which the two teams attempt to score goals and throw the ball into their opponent's goal. The team with the most goals at the end of the game wins the match. Each team made up of six field players and one goalkeeper. Except for the goalkeeper, players participate in both offensive and defensive roles. Water polo is typically played in an all-deep pool seven feet (or two meters) deep.", picture="waterpolo.png", user=u)
+    c27 = Category(id=27, name="Water_Polo", description="Water polo is a competitive team sport played in the water between two teams. The game consists of four quarters, in which the two teams attempt to score goals and throw the ball into their opponent's goal. The team with the most goals at the end of the game wins the match. Each team made up of six field players and one goalkeeper. Except for the goalkeeper, players participate in both offensive and defensive roles. Water polo is typically played in an all-deep pool seven feet (or two meters) deep.", picture="waterpolo.png", user=u)
     session.add(c27)
     session.commit()
 
@@ -171,7 +171,7 @@ if test == 0:
     session.add(i10)
     session.commit()
 
-    i11 = CatalogItem(id=11, name="Cycling Shoe", description="Cycling shoes are shoes purpose-built for cycling. There are a variety of designs depending on the type and intensity of the cycling for which they are intended. Key features include rigidity, for more-efficient transfer of power from the cyclist to the pedals, weight, a method of attaching the shoe firmly to the pedal and adaptability for use on and off the bicycle. Most high-performance cycling shoes can be adjusted while in use, via a quick-adjusting system that has largely replaced laces.", picture="boot.png", category=c7, user=u)
+    i11 = CatalogItem(id=11, name="Cycling_Shoe", description="Cycling shoes are shoes purpose-built for cycling. There are a variety of designs depending on the type and intensity of the cycling for which they are intended. Key features include rigidity, for more-efficient transfer of power from the cyclist to the pedals, weight, a method of attaching the shoe firmly to the pedal and adaptability for use on and off the bicycle. Most high-performance cycling shoes can be adjusted while in use, via a quick-adjusting system that has largely replaced laces.", picture="boot.png", category=c7, user=u)
     session.add(i11)
     session.commit()
 
@@ -187,7 +187,7 @@ if test == 0:
     session.add(i14)
     session.commit()
 
-    i15 = CatalogItem(id=15, name="Boxing Ring", description="A boxing ring is the space in which a boxing match occurs. A modern ring, which is set on a raised platform, is square with a post at each corner to which four parallel rows of ropes are attached with a turnbuckle. Unlike its cousin the wrestling ring, the ropes in a boxing ring are generally connected together between the posts.", picture="boxing-ring-1.png", category=c9, user=u)
+    i15 = CatalogItem(id=15, name="Boxing_Ring", description="A boxing ring is the space in which a boxing match occurs. A modern ring, which is set on a raised platform, is square with a post at each corner to which four parallel rows of ropes are attached with a turnbuckle. Unlike its cousin the wrestling ring, the ropes in a boxing ring are generally connected together between the posts.", picture="boxing-ring-1.png", category=c9, user=u)
     session.add(i15)
     session.commit()
 
@@ -215,15 +215,15 @@ if test == 0:
     session.add(i21)
     session.commit()
 
-    i22 = CatalogItem(id=22, name="Hockey Stick", description="A hockey stick is a piece of equipment used by the players in most forms of hockey to move the ball or puck.", picture="hockey.png", category=c15, user=u)
+    i22 = CatalogItem(id=22, name="Hockey_Stick", description="A hockey stick is a piece of equipment used by the players in most forms of hockey to move the ball or puck.", picture="hockey.png", category=c15, user=u)
     session.add(i22)
     session.commit()
 
-    i23 = CatalogItem(id=23, name="Ice skates", description="Ice skates are boots with blades attached to the bottom, used to propel the bearer across a sheet of ice while ice skating.", picture="ice-skating.png", category=c15, user=u)
+    i23 = CatalogItem(id=23, name="Ice_Skates", description="Ice skates are boots with blades attached to the bottom, used to propel the bearer across a sheet of ice while ice skating.", picture="ice-skating.png", category=c15, user=u)
     session.add(i23)
     session.commit()
 
-    i24 = CatalogItem(id=24, name="Punching bag", description="A punching bag (or, British English, punchbag) is a sturdy bag designed to be repeatedly punched. A punching bag is usually cylindrical, and filled with various materials of corresponding hardness.", picture="punch.png", category=c9, user=u)
+    i24 = CatalogItem(id=24, name="Punching_Bag", description="A punching bag (or, British English, punchbag) is a sturdy bag designed to be repeatedly punched. A punching bag is usually cylindrical, and filled with various materials of corresponding hardness.", picture="punch.png", category=c9, user=u)
     session.add(i24)
     session.commit()
 
@@ -239,7 +239,7 @@ if test == 0:
     session.add(i27)
     session.commit()
 
-    i28 = CatalogItem(id=28, name="Steering Wheel", description="A steering wheel (also called a driving wheel or a hand wheel) is a type of steering control in vehicles and vessels (ships and boats).", picture="steering-wheel.png", category=c20, user=u)
+    i28 = CatalogItem(id=28, name="Steering_Wheel", description="A steering wheel (also called a driving wheel or a hand wheel) is a type of steering control in vehicles and vessels (ships and boats).", picture="steering-wheel.png", category=c20, user=u)
     session.add(i28)
     session.commit()
 
@@ -267,7 +267,7 @@ if test == 0:
     session.add(i34)
     session.commit()
 
-    i35 = CatalogItem(id=35, name="World Cup", description="The FIFA World Cup, often simply called the World Cup, is an international association football competition contested by the senior men's national teams of the members of Fédération Internationale de Football Association (FIFA), the sport's global governing body. The championship has been awarded every four years since the inaugural tournament in 1930, except in 1942 and 1946 when it was not held because of the Second World War. The current champion is Germany, which won its fourth title at the 2014 tournament in Brazil.", picture="world-cup.png", category=c23, user=u)
+    i35 = CatalogItem(id=35, name="World_Cup", description="The FIFA World Cup, often simply called the World Cup, is an international association football competition contested by the senior men's national teams of the members of Fédération Internationale de Football Association (FIFA), the sport's global governing body. The championship has been awarded every four years since the inaugural tournament in 1930, except in 1942 and 1946 when it was not held because of the Second World War. The current champion is Germany, which won its fourth title at the 2014 tournament in Brazil.", picture="world-cup.png", category=c23, user=u)
     session.add(i35)
     session.commit()
 

@@ -96,8 +96,13 @@ def show_item(category_name, item_name):
 @login_required
 def add_category():
     if request.method == "POST":
+        # Check for name safety
+        safe_name = secure_filename(request.form["cat_name"])
+        # Swap dots by underscores to make URL clean
+        safe_name = safe_name.replace(".","_")
+
         # Check if the category exists:
-        cat = session.query(Category).filter_by(name=request.form["cat_name"])
+        cat = session.query(Category).filter_by(name=safe_name)
         if cat.count() > 0:
             flash("Category name alredy exists.")
         else:
@@ -124,7 +129,7 @@ def add_category():
                 u = session.query(User).filter_by(id=login_session["user_id"])
                 u = u.first()
                 # Create DB entry for new category
-                new_category = Category(name=request.form["cat_name"],
+                new_category = Category(name=safe_name,
                                         picture=filename,
                                         description=request.form["desc"],
                                         user=u)
@@ -142,13 +147,17 @@ def add_item(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
     if category:
         if request.method == "POST":
-            name = request.form["item_name"]
+            # Check for name safety
+            safe_name = secure_filename(request.form["item_name"])
+            # Swap dots by underscores to make URL clean
+            safe_name = safe_name.replace(".","_")
             cat_id = category.id
-            item = session.query(CatalogItem).filter_by(name=name,
+            item = session.query(CatalogItem).filter_by(name=safe_name,
                                                         category_id=cat_id)
             if item.count() > 0:
                 flash("Item already exists exists")
                 return render_template("new_item.html",
+                                       category_name=category_name,
                                        user_id=login_session.get("user_id"))
             else:
                 u_id = login_session.get("user_id")
@@ -175,7 +184,7 @@ def add_item(category_name):
                     # Find user that will own the category
                     u = session.query(User).filter_by(id=u_id).first()
                     # Create DB entry for new category
-                    new_item = CatalogItem(name=request.form["item_name"],
+                    new_item = CatalogItem(name=safe_name,
                                            picture=filename,
                                            description=request.form["desc"],
                                            category=category,
