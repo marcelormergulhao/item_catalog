@@ -49,6 +49,7 @@ def login_required(json_endpoint):
         return decorated_function
     return first_wrapper
 
+
 @app.route("/")
 @app.route("/catalog")
 def show_categories():
@@ -103,7 +104,7 @@ def add_category():
         # Check for name safety
         safe_name = secure_filename(request.form["cat_name"])
         # Swap dots by underscores to make URL clean
-        safe_name = safe_name.replace(".","_")
+        safe_name = safe_name.replace(".", "_")
 
         # Check if the category exists:
         cat = session.query(Category).filter_by(name=safe_name)
@@ -137,8 +138,14 @@ def add_category():
                                         picture=filename,
                                         description=request.form["desc"],
                                         user=u)
-                session.add(new_category)
-                session.commit()
+                try:
+                    session.add(new_category)
+                    session.commit()
+                except:
+                    # Exceptions occur if the name uniqueness was violated
+                    flash("Category name alredy exists.")
+                    return render_template("new_category.html",
+                                           id=login_session.get("user_id"))
                 return redirect(url_for('show_categories'))
     return render_template("new_category.html",
                            id=login_session.get("user_id"))
@@ -154,7 +161,7 @@ def add_item(category_name):
             # Check for name safety
             safe_name = secure_filename(request.form["item_name"])
             # Swap dots by underscores to make URL clean
-            safe_name = safe_name.replace(".","_")
+            safe_name = safe_name.replace(".", "_")
             cat_id = category.id
             item = session.query(CatalogItem).filter_by(name=safe_name,
                                                         category_id=cat_id)

@@ -29,7 +29,7 @@ class Category(Base):
     """Table representing the categories of the catalog items"""
     __tablename__ = 'category'
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     description = Column(String)
     picture = Column(String)
     user_id = Column(Integer, ForeignKey("user.id"))
